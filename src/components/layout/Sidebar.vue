@@ -1,6 +1,6 @@
 <template>
     <div v-if="isModal">
-        <base-modal>
+        <base-modal @close="isModal = false">
             <template #body>
                 <h3>content</h3>
             </template>
@@ -77,8 +77,6 @@ async function handleLogout() {
 
     }
 }
-
-
 </script>
 
 <style scoped>
