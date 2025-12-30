@@ -11,6 +11,7 @@ import BaseButton from "./components/ui/base/BaseButton.vue";
 import BaseInput from "./components/ui/base/BaseInput.vue";
 import BaseModal from "./components/ui/base/BaseModal.vue";
 import BaseToast from "./components/ui/base/BaseToast.vue";
+import ArticleCardSkeleton from "./components/common/ArticleCardSkeleton.vue";
 
 import App from "./App.vue";
 import router from "./router";
@@ -25,5 +26,6 @@ app.component("base-button", BaseButton);
 app.component("BaseInput", BaseInput);
 app.component("BaseModal", BaseModal);
 app.component("BaseToast", BaseToast);
+app.component("ArticleCaedSkeleton", ArticleCardSkeleton);
 
 app.mount("#app");

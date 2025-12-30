@@ -45,7 +45,7 @@
 
                 <!-- Logout -->
                 <li class="nav-item mt-3">
-                    <base-button type="button" @click="statusModal">Logout</base-button>
+                    <base-button type="button" @click="statusModal" variants="danger">Logout</base-button>
                 </li>
             </ul>
         </div>
@@ -81,7 +81,7 @@ async function handleLogout() {
 <style scoped>
 .sidebar {
     position: fixed;
-    top: 56px;
+    top: 53px;
     left: 0;
     width: 250px;
     height: calc(100vh - 56px);
@@ -102,35 +102,15 @@ async function handleLogout() {
 
 .nav-link.active {
     color: #fff;
-    background-image: linear-gradient(#5772f9);
+    background-color: var(--btn-default);
 }
 
 .nav-link:hover {
     color: #fff;
-    background-image: linear-gradient(#5772f99d);
+    background-color: var(--btn-hover);
 }
 
 .sidebar .text-secondary {
     color: rgba(255, 255, 255, 0.75) !important;
-}
-
-/* Make buttons inside the sidebar show a filled blue background on hover/focus */
-.sidebar .btn,
-.sidebar button {
-    color: #fff;
-    background-color: transparent;
-    border-color: rgba(255, 255, 255, 0.15);
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.sidebar .btn:hover,
-.sidebar button:hover,
-.sidebar .btn:focus,
-.sidebar button:focus,
-.sidebar .btn:focus-visible,
-.sidebar button:focus-visible {
-    background-color: #0b5ed7;
-    color: #fff;
-    border-color: #0b5ed7;
 }
 </style>

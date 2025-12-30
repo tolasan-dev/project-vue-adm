@@ -5,6 +5,7 @@ import ArticleListView from "@/views/article/ArticleListView.vue";
 import DashboardView from "@/views/DashboardView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import ArticlePreviewView from "@/views/article/ArticlePreviewView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -34,6 +35,12 @@ const router = createRouter({
               component: ArticleCreateVue,
               meta: { title: "Aricle-Create" },
             },
+            {
+              path: ":id",
+              name: "article.detail",
+              component: ArticlePreviewView,
+              meta: { title: "Article-detail" },
+            },
           ],
         },
       ],
@@ -62,6 +69,8 @@ router.beforeEach(async (to) => {
     }
   }
 
+  console.log("isAuthen is index.js", authStore.isAuthenticate);
+
   // protech pii login kom oy vai rout tv dashboard trov ka login sen
   if (!authStore.isAuthenticate && to.name !== "login") {
     return { name: "login" };
@@ -69,6 +78,7 @@ router.beforeEach(async (to) => {
 
   // keapea when yg have token and profile ot oy ke vai rout to login
   if (authStore.isAuthenticate && to.name === "login") {
+    // alert();
     return { name: "dashboard" };
   }
   return true;

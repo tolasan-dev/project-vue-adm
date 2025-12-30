@@ -96,7 +96,7 @@ async function handleLogin() {
             }
         );
         auth.fetchProfile();
-        // router.push('/')
+        router.push('/');
     }
     catch (err) {
         console.log(err);

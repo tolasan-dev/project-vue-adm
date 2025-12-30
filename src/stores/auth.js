@@ -22,6 +22,7 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const res = await api.get("/auth/profile");
       user.value = res.data.data;
+      console.log(user.value);
     } catch (error) {
       clearAuth();
       throw error;

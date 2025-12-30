@@ -4,5 +4,6 @@
   box-sizing: border-box;
 }
 :root {
-    --bg-button:  background-image: linear-gradient(#C850C0, #5772f9) !important;
+  --btn-default: #5772f9;
+  --btn-hover: #5772f99d;
 }
