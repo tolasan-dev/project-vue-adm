@@ -23,8 +23,7 @@
             </div>
 
             <!-- Action Button -->
-            <RouterLink :to="{ name: `article.detail`, params: { id } }" class="btn btn-primary w-100"
-                @click="readMore">
+            <RouterLink :to="{ name: `article.detail`, params: { id } }" class="btn btn-primary w-100">
                 Read Article
             </RouterLink>
         </div>
@@ -55,7 +54,7 @@ defineProps({
     },
     creatorName: {
         type: String,
-        required: true,
+        required: "",
     },
 });
 </script>

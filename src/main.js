@@ -12,6 +12,7 @@ import BaseInput from "./components/ui/base/BaseInput.vue";
 import BaseModal from "./components/ui/base/BaseModal.vue";
 import BaseToast from "./components/ui/base/BaseToast.vue";
 import ArticleCardSkeleton from "./components/common/ArticleCardSkeleton.vue";
+import BaseTable from "./components/ui/base/BaseTable.vue";
 
 import App from "./App.vue";
 import router from "./router";
@@ -27,5 +28,6 @@ app.component("BaseInput", BaseInput);
 app.component("BaseModal", BaseModal);
 app.component("BaseToast", BaseToast);
 app.component("ArticleCaedSkeleton", ArticleCardSkeleton);
+app.component("BaseTable", BaseTable);
 
 app.mount("#app");
