@@ -16,6 +16,7 @@ export const useArticleStore = defineStore("article", () => {
     isLoading.value = true;
     try {
       const res = await api.get("/articles");
+      console.log("All fetch api: ", res.data.items);
       articles.value = res.data?.data?.items ?? [];
     } catch (error) {
       console.error(error);
