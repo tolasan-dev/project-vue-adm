@@ -97,7 +97,7 @@ export const useArticleStore = defineStore("article", () => {
   };
 
   return {
-    // state
+
     articles,
     article,
     my_article,
