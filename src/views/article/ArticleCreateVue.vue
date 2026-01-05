@@ -37,8 +37,10 @@ const handlePublish = async () => {
 
         isLoading.value = true;
 
+        // piont to form data code in Article form
         const form = formRef.formData;
 
+        // get text data not thumnail
         const res = await articleStore.createArticle({
             title: form.title.trim(),
             categoryId: Number(form.categoryId),
@@ -47,11 +49,13 @@ const handlePublish = async () => {
 
         const articleId = res.data.id;
 
+        // post thumnail
         if (form.thumbnail) {
             const formData = new FormData();
             formData.append('thumbnail', form.thumbnail);
             await articleStore.createThumbnail(articleId, formData);
         }
+        // reset all input call from Article form
         formRef.resetForm();
         router.push({ name: 'article.index' });
     } catch (error) {

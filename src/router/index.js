@@ -6,6 +6,7 @@ import DashboardView from "@/views/DashboardView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import ArticlePreviewView from "@/views/article/ArticlePreviewView.vue";
+import ArticleEdit from "@/views/article/ArticleEdit.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -41,9 +42,16 @@ const router = createRouter({
               component: ArticlePreviewView,
               meta: { title: "Article-detail" },
             },
+            {
+              path: "edit/:id",
+              name: "edit.article",
+              component: ArticleEdit,
+              meta: { title: "Edit-Article" },
+            },
           ],
         },
       ],
+      linkActiveClass: "active btn btn-primary text-light",
     },
     {
       path: "/login",

@@ -44,7 +44,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useArtitleStore } from '@/stores/article';
+import { useRouter } from 'vue-router';
 const articleStore = useArtitleStore();
+const router = useRouter();
 
 let isModal = ref(false);
 let selectId = ref(null);
@@ -63,7 +65,8 @@ const columns = [
 
 // handle edit article 
 const onEdit = (id) => {
-    console.log("Article Edit : ", id);
+
+    router.push({ name: 'edit.article', params: { id } })
 }
 
 const onDelete = (id) => {

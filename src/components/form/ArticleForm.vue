@@ -1,3 +1,5 @@
+<!-- we create the Article Form to make it reusable becuse we can use it 
+ at create and update article -->
 <template>
     <form class="grid gap-3 content-start">
         <div>
@@ -18,6 +20,7 @@
             </div>
         </div>
 
+        <!-- thumnail -->
         <div>
             <label class="form-label mt-3">Thumbnail</label>
             <div v-if="thumbnailPreview || existingThumbnail" class="mb-2">

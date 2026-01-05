@@ -26,7 +26,6 @@ export const useArtitleStore = defineStore("article", () => {
   //   get a article by id
   const getArticleById = async (id) => {
     try {
-      console.log(id);
       const res = await api.get(`/articles/${id}`);
       article.value = res.data.data;
       // console.log("aArtice:", article.value);
@@ -83,6 +82,18 @@ export const useArtitleStore = defineStore("article", () => {
       console.log(err);
     }
   };
+
+  // update article
+  const updateArticle = async (id, payload) => {
+    // console.log("update Article Id:", id);
+    // console.log("data form update", payload);
+    try {
+      const res = await api.put(`/articles/${id}`, payload);
+      console.log("Respone Update:", res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return {
     getAllArticle,
     getArticleById,
@@ -90,6 +101,7 @@ export const useArtitleStore = defineStore("article", () => {
     createArticle,
     createThumbnail,
     deleteArticle,
+    updateArticle,
     my_article,
     my_loading,
     isLoadding,
