@@ -10,6 +10,7 @@ export const useCategoryStore = defineStore("category", () => {
     try {
       isLoading.value = true;
       const res = await api.get("/categories");
+      console.log(res.data.data.item);
       categories.value = res.data.data.items;
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -18,5 +19,19 @@ export const useCategoryStore = defineStore("category", () => {
     }
   };
 
-  return { categories, isLoading, fetchCategories };
+
+  // method for handle deleted category by id
+ 
+  const DeleteCategory = async (id) => {
+    console.log(id);
+    try {
+      delete_loading.value = true;
+      const res = await api.delete("/categories/" + id);
+      console.log(res.data);
+      delete_loading.value = false;
+    } catch (err) {
+      console.log("delete category err:", err);
+    }
+  };
+  return { categories, isLoading, fetchCategories, DeleteCategory, };
 });

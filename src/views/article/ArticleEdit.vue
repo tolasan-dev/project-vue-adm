@@ -5,60 +5,77 @@
     </div>
     <div>
       <ArticleForm ref="articleFormRef" />
-      <base-button @click="handleUpdateArticle" :isLoading="isLoding">
+      <base-button
+        @click="handleUpdateArticle"
+        :isLoading="isLoading"
+        class="mt-3"
+      >
         Update Article
       </base-button>
     </div>
   </div>
 </template>
+
 <script setup>
 import ArticleForm from "@/components/form/ArticleForm.vue";
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useArticleStore } from "@/stores/article";
 
 const router = useRouter();
 const route = useRoute();
 const articleStore = useArticleStore();
 
-let articleFormRef = ref(null);
-let id = Number(route.params.id);
-let isLoding = ref(false);
+const articleFormRef = ref(null);
+const id = Number(route.params.id);
+const isLoading = ref(false);
 
-// point to form data in article form by ref
-
-// get aticle by id to provide value in input
 onMounted(async () => {
-  const formRef = articleFormRef.value;
-  const form = formRef.formData;
+  if (!articleFormRef.value) return;
 
   await articleStore.getArticleById(id);
+  // form.categoryId = articleStore.article.category?.id;
+  if (!articleStore.article) return;
 
-  form.title = articleStore.article.title;
-  form.categoryId = articleStore.article.category
-    ? articleStore.article.category.id
-    : null;
-  form.thumbnail = articleStore.article.thumbnail;
-  form.content = articleStore.article.content;
+  const article = articleStore.article;
+  const formRef = articleFormRef.value;
+
+  // Fill normal fields
+  formRef.formData.title = article.title ?? "";
+  formRef.formData.categoryId = article.category?.id ?? "";
+  formRef.formData.content = article.content ?? "";
+
+  // ✅ CORRECT IMAGE HANDLING
+  formRef.formData.thumbnail = null;
+  formRef.existingThumbnail = article.thumbnail ?? null;
 });
 
 const handleUpdateArticle = async () => {
   const formRef = articleFormRef.value;
-  if (!formRef.validateForm()) return;
+  if (!formRef || !formRef.validateForm()) return;
 
   try {
+    isLoading.value = true;
+
     const form = formRef.formData;
-    isLoding.value = true;
-    const res = await articleStore.updateArticle(id, {
-      title: form.title.trim(),
-      categoryId: Number(form.categoryId),
-      content: form.content.trim(),
-    });
+
+    const data = new FormData();
+    data.append("title", form.title.trim());
+    data.append("categoryId", form.categoryId);
+    data.append("content", form.content.trim());
+
+    // ✅ ONLY send image if user selected a new one
+    // if (form.thumbnail) {
+    //   data.append("thumbnail", form.thumbnail);
+    // }
+
+    await articleStore.updateArticle(id, data);
+
     router.push({ name: "article.index" });
-    isLoding.value = false;
   } catch (err) {
-    console.log("err catch:", err);
+    console.error("Update failed:", err);
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>

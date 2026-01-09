@@ -89,6 +89,7 @@ export const useArticleStore = defineStore("article", () => {
   const updateArticle = async (id, payload) => {
     try {
       const res = await api.put(`/articles/${id}`, payload);
+    console.log(res.data);
       return res.data;
     } catch (error) {
       console.error(error);
@@ -97,7 +98,6 @@ export const useArticleStore = defineStore("article", () => {
   };
 
   return {
-
     articles,
     article,
     my_article,

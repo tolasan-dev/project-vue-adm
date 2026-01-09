@@ -1,16 +1,15 @@
-<!-- we create the Article Form to make it reusable becuse we can use it 
- at create and update article -->
 <template>
   <div class="border p-4 rounded-3">
     <form class="grid gap-3 content-start">
-      <div>
-        <BaseInput
-          label="Title *"
-          v-model="formData.title"
-          :error="errors.title"
-          @blur="validateField('title', formData.title, 'Title is required')"
-        />
-      </div>
+      <!-- Title -->
+      <BaseInput
+        label="Title *"
+        v-model="formData.title"
+        :error="errors.title"
+        @blur="validateField('title', formData.title, 'Title is required')"
+      />
+
+      <!-- Category -->
       <div>
         <label class="form-label mt-3">Category *</label>
         <select
@@ -34,14 +33,17 @@
             {{ category.name }}
           </option>
         </select>
+
         <div v-if="errors.categoryId" class="invalid-feedback d-block">
           {{ errors.categoryId }}
         </div>
       </div>
 
-      <!-- thumnail -->
+      <!-- Thumbnail -->
       <div>
         <label class="form-label mt-3">Thumbnail</label>
+
+        <!-- ✅ IMAGE PREVIEW -->
         <div v-if="thumbnailPreview || existingThumbnail" class="mb-2">
           <img
             :src="thumbnailPreview || existingThumbnail"
@@ -49,9 +51,11 @@
             style="max-width: 200px; border-radius: 4px"
           />
         </div>
+
         <input type="file" class="form-control" @change="onThumbnailChange" />
       </div>
 
+      <!-- Content -->
       <div>
         <label class="form-label mt-3">Content *</label>
         <textarea
@@ -73,7 +77,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useCategoryStore } from "@/stores/category";
 import { useRequiredValidator } from "@/composable/useRequiredValidator";
 
@@ -83,19 +87,17 @@ const { errors, validateField } = useRequiredValidator();
 const formData = ref({
   title: "",
   categoryId: "",
-  thumbnail: null,
+  thumbnail: null, // File only
   content: "",
 });
 
-const existingThumbnail = ref("");
-
-// const fileInputRef = ref(null)
+const existingThumbnail = ref(null); // URL from backend
+const thumbnailPreview = ref(null); // Preview for new file
 
 onMounted(async () => {
   await categoryStore.fetchCategories();
 });
 
-const thumbnailPreview = ref("");
 const onThumbnailChange = (event) => {
   const file = event.target.files[0] || null;
   formData.value.thumbnail = file;
@@ -103,7 +105,7 @@ const onThumbnailChange = (event) => {
   if (file) {
     thumbnailPreview.value = URL.createObjectURL(file);
   } else {
-    thumbnailPreview.value = "";
+    thumbnailPreview.value = null;
   }
 };
 
@@ -123,12 +125,26 @@ const validateForm = () => {
 };
 
 const resetForm = () => {
-  formData.value.title = "";
-  formData.value.categoryId = "";
-  formData.value.thumbnail = null;
-  formData.value.content = "";
-  existingThumbnail.value = "";
+  formData.value = {
+    title: "",
+    categoryId: "",
+    thumbnail: null,
+    content: "",
+  };
+  existingThumbnail.value = null;
+  thumbnailPreview.value = null;
 };
 
-defineExpose({ formData, validateForm, resetForm, existingThumbnail });
+defineExpose({
+  formData,
+  validateForm,
+  resetForm,
+  existingThumbnail, // 👈 parent sets this
+});
 </script>
+
+<style scoped>
+.border {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+</style>

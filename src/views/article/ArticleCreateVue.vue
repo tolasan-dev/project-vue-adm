@@ -1,13 +1,16 @@
 <template>
-  <h3 class="mb-3">Article Create</h3>
+  <h3 class="mb-3 text-center text-sm-start">Article Create</h3>
+
   <ArticleForm ref="articleFormRef" />
+
   <div
-    class="d-flex flex-column flex-sm-row justify-content-sm-between my-3 gap-2"
+    class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-stretch gap-2 my-3"
   >
+    <!-- Back Button -->
     <RouterLink
       :to="{ name: 'article.index' }"
       :class="[
-        'btn btn-primary d-flex align-items-center gap-2',
+        'btn btn-outline-primary w-100 w-sm-auto d-flex align-items-center justify-content-center gap-2',
         isLoading ? 'disabled' : '',
       ]"
     >
@@ -15,10 +18,11 @@
       Back to Articles
     </RouterLink>
 
+    <!-- Publish Button -->
     <BaseButton
       :loading="isLoading"
       @click="handlePublish"
-      class="btn btn-primary d-flex align-items-center gap-2"
+      class="btn btn-primary w-100 w-sm-auto d-flex align-items-center justify-content-center gap-2"
     >
       <template #icon>
         <i class="bi bi-send-fill text-white"></i>
@@ -47,7 +51,7 @@ const handlePublish = async () => {
   try {
     isLoading.value = true;
 
-    // piont to form data code in Article form
+    // instance object form for handle post article 
     const form = formRef.formData;
 
     // get text data not thumnail
@@ -57,9 +61,9 @@ const handlePublish = async () => {
       content: form.content.trim(),
     });
 
-    const articleId = res.data.id;
+    const articleId = res.data.id; 
 
-    // post thumnail
+    // Post Thumbnail 
     if (form.thumbnail) {
       const formData = new FormData();
       formData.append("thumbnail", form.thumbnail);

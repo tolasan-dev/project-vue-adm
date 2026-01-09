@@ -1,4 +1,5 @@
 import Login from "@/authentication/Login.vue";
+import SignUp from "@/authentication/SignUp.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import ArticleCreateVue from "@/views/article/ArticleCreateVue.vue";
 import ArticleListView from "@/views/article/ArticleListView.vue";
@@ -51,6 +52,12 @@ const router = createRouter({
             },
           ],
         },
+        
+        {
+          path: "/category",
+          name: "category",
+          component: CategoryView,
+        },
       ],
       linkActiveClass: "active btn btn-primary text-light",
     },
@@ -61,9 +68,9 @@ const router = createRouter({
       meta: { title: "Login" },
     },
     {
-      path: "/category",
-      name: "category",
-      component: CategoryView,
+      path: "/signup",
+      name: "Signup",
+      component: SignUp,
     },
   ],
 });

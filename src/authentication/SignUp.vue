@@ -1,6 +1,6 @@
-<!-- Login.vue -->
+<!-- Signup.vue -->
 <template>
-  <div class="auth-page login-page">
+  <div class="auth-page signup-page">
     <base-toast v-if="isShowToast" :message="messToast" @close="handleToast" />
 
     <div class="auth-card">
@@ -8,11 +8,20 @@
         <div class="logo-wrapper">
           <!-- <img src="@/assets/logo.svg" alt="Logo" class="logo-img" /> -->
         </div>
-        <h1>Welcome Back</h1>
-        <p>Sign in to continue your journey</p>
+        <h1>Create Account</h1>
+        <p>Join us and get started today</p>
       </div>
 
-      <form @submit.prevent="handleLogin" class="auth-form">
+      <form @submit.prevent="handleSignup" class="auth-form">
+        <base-input
+          id="fullName"
+          v-model="fullName"
+          label="Full name"
+          placeholder="John Doe"
+          :error="errors.fullName"
+          @blur="validateField('fullName', fullName, 'Full name is required')"
+        />
+
         <base-input
           id="email"
           v-model="email"
@@ -31,14 +40,12 @@
             :type="showPassword ? 'text' : 'password'"
             placeholder="••••••••"
             :error="errors.password"
-            @blur="validatePass"
+            @blur="validatePassword"
           />
-
           <button
             type="button"
             class="password-toggle"
             @click="showPassword = !showPassword"
-            tabindex="-1"
           >
             <i
               class="bi"
@@ -47,36 +54,42 @@
           </button>
         </div>
 
-        <div class="options-row">
-          <label class="remember-me">
-            <input type="checkbox" v-model="rememberMe" />
-            <span>Remember me</span>
-          </label>
-          <a href="#" class="forgot-link">Forgot password?</a>
+        <div class="password-container">
+          <base-input
+            id="confirmPassword"
+            v-model="confirmPassword"
+            label="Confirm password"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            :error="errors.confirmPassword"
+            @blur="validateConfirmPassword"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            @click="showConfirmPassword = !showConfirmPassword"
+          >
+            <i
+              class="bi"
+              :class="showConfirmPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"
+            ></i>
+          </button>
         </div>
 
-        <!-- <base-button
+        <base-button
           type="submit"
-          :label="isLoading ? '' : 'Sign In'"
+          :label="isLoading ? '' : 'Create Account'"
           :loading="isLoading"
-          :disabled="isLoading || disabled"
           class="submit-btn"
         >
-          <template #loading> Signing in... </template>
-        </base-button> -->
-        <base-button
-          statusType="submit"
-          :isLoading="Loading"
-          :isDisable="disabled"
-        >
-          Login <i class="bi bi-airplane"></i>
+          <template #loading> Creating... </template>
         </base-button>
       </form>
 
       <div class="switch-auth">
         <p>
-          Don't have an account?
-          <router-link to="/signup">Sign up</router-link>
+          Already have an account?
+          <router-link to="/login">Sign in</router-link>
         </p>
       </div>
     </div>
@@ -93,17 +106,17 @@ import { useRequiredValidator } from "@/composable/useRequiredValidator";
 
 import BaseButton from "@/components/ui/base/BaseButton.vue";
 import BaseInput from "@/components/ui/base/BaseInput.vue";
-import BaseToast from "@/components/ui/base/BaseToast.vue";
 
 const router = useRouter();
 const auth = useAuthStore();
 
+const fullName = ref("");
 const email = ref("");
 const password = ref("");
+const confirmPassword = ref("");
 const showPassword = ref(false);
-const rememberMe = ref(true);
+const showConfirmPassword = ref(false);
 const isLoading = ref(false);
-const disabled = ref(false);
 const isShowToast = ref(false);
 const messToast = ref("");
 
@@ -111,24 +124,58 @@ const { errors, validateField } = useRequiredValidator();
 
 const validateEmail = () =>
   validateField("email", email.value, "Email is required");
-const validatePass = () =>
+
+const validatePassword = () => {
   validateField("password", password.value, "Password is required");
+  if (password.value.length < 8) {
+    errors.password = "Password must be at least 8 characters";
+    return false;
+  }
+  return true;
+};
 
-const validateForm = () => validateEmail() && validatePass();
+const validateConfirmPassword = () => {
+  validateField(
+    "confirmPassword",
+    confirmPassword.value,
+    "Please confirm your password"
+  );
+  if (password.value !== confirmPassword.value) {
+    errors.confirmPassword = "Passwords do not match";
+    return false;
+  }
+  return true;
+};
 
-async function handleLogin() {
+const validateForm = () => {
+  let valid = true;
+  if (!validateField("fullName", fullName.value, "Full name is required"))
+    valid = false;
+  if (!validateEmail()) valid = false;
+  if (!validatePassword()) valid = false;
+  if (!validateConfirmPassword()) valid = false;
+  return valid;
+};
+
+async function handleSignup() {
   if (!validateForm()) return;
 
   try {
     isLoading.value = true;
-    await auth.login({ email: email.value.trim(), password: password.value });
+    await auth.register({
+      fullName: fullName.value.trim(),
+      email: email.value.trim(),
+      password: password.value,
+    });
+
+    // Auto-login after success (optional)
+    await auth.login({ email: email.value, password: password.value });
     await auth.fetchProfile();
+
     router.push("/");
   } catch (err) {
-    messToast.value = err?.response?.data?.message || "Login failed";
+    messToast.value = err?.response?.data?.message || "Registration failed";
     isShowToast.value = true;
-
-    console.log("isShowToast after set:", isShowToast.value)
   } finally {
     isLoading.value = false;
   }
@@ -139,23 +186,32 @@ function handleToast() {
 }
 </script>
 
+<!-- Login.vue and Signup.vue - use the same <style scoped> block -->
+
 <style scoped>
 .auth-page {
   min-height: 100dvh;
   display: grid;
   place-items: center;
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   position: relative;
   padding: 1.5rem;
+  overflow: hidden;
 }
 
 .background-decoration {
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    circle at 20% 30%,
-    rgba(255, 255, 255, 0.12) 0%,
-    transparent 40%
-  );
+      circle at 15% 20%,
+      rgba(255, 255, 255, 0.12) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 45%
+    );
   pointer-events: none;
 }
 
@@ -164,28 +220,34 @@ function handleToast() {
   max-width: 420px;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 2.5rem 2.25rem;
-  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  animation: fadeInUp 0.7s ease-out;
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .auth-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
 }
 
 .auth-header h1 {
-  font-size: 2.1rem;
+  font-size: 2.125rem;
   font-weight: 700;
   color: #111827;
   margin: 0 0 0.5rem;
+  letter-spacing: -0.025em;
 }
 
 .auth-header p {
   color: #6b7280;
   margin: 0;
+  font-size: 0.975rem;
 }
 
 .auth-form {
@@ -200,15 +262,16 @@ function handleToast() {
 
 .password-toggle {
   position: absolute;
-  right: 1rem;
+  right: 1.125rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: #9ca3af;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   cursor: pointer;
   padding: 0.5rem;
+  transition: color 0.2s ease;
 }
 
 .password-toggle:hover {
@@ -219,19 +282,26 @@ function handleToast() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: #4b5563;
+  margin-top: -0.25rem;
 }
 
 .remember-me {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  user-select: none;
+}
+
+.remember-me input {
+  accent-color: #6366f1;
 }
 
 .forgot-link {
   color: #6366f1;
   text-decoration: none;
+  font-weight: 500;
 }
 
 .forgot-link:hover {
@@ -240,9 +310,9 @@ function handleToast() {
 
 .switch-auth {
   text-align: center;
-  margin-top: 1.75rem;
+  margin-top: 2rem;
   color: #6b7280;
-  font-size: 0.95rem;
+  font-size: 0.925rem;
 }
 
 .switch-auth a {
@@ -255,14 +325,27 @@ function handleToast() {
   text-decoration: underline;
 }
 
+/* Animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(25px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 2rem 1.75rem;
+    border-radius: 20px;
+  }
+
+  .auth-header h1 {
+    font-size: 1.875rem;
   }
 }
 </style>

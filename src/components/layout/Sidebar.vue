@@ -48,6 +48,11 @@
                   >Create Article</RouterLink
                 >
               </li>
+              <li class="nav-item">
+                <RouterLink class="nav-link" to="/category"
+                  >Category</RouterLink
+                >
+              </li>
             </ul>
           </div>
         </li>
